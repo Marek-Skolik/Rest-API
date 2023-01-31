@@ -1,13 +1,17 @@
 const express = require('express');
 const app = express();
+// const { v4: uuidv4 } = require('uuid');
+// const db = require('./db');
+const cors = require('cors');
 const path = require('path');
 const testimonialsRoutes = require('./routes/testimonials.routes');
 const concertsRoutes = require('./routes/concerts.routes');
 const seatsRoutes = require('./routes/seats.routes');
 
+// Serve static files from the React app
 app.use(express.static(path.join(__dirname, '/client/build')));
 
-app.use(express.urlencoded({ extends: false }));
+app.use(cors());
 app.use(express.json());
 
 app.use('/api', testimonialsRoutes);
