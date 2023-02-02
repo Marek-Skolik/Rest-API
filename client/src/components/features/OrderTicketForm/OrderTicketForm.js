@@ -1,38 +1,27 @@
-import { Button, Form, FormGroup, Label, Input, Row, Col, Alert, Progress } from "reactstrap";
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addSeatRequest, getRequests, loadSeats, loadSeatsRequest } from "../../../redux/seatsRedux";
-import "./OrderTicketForm.scss";
-import SeatChooser from "./../SeatChooser/SeatChooser";
-import io from 'socket.io-client';
+import { Button, Form, FormGroup, Label, Input, Row, Col, Alert, Progress } from 'reactstrap';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addSeatRequest, getRequests } from '../../../redux/seatsRedux';
+import { loadSeatsRequest } from '../../../redux/seatsRedux';
+import './OrderTicketForm.scss';
+import SeatChooser from './../SeatChooser/SeatChooser';
 
 const OrderTicketForm = () => {
   const dispatch = useDispatch();
   const requests = useSelector(getRequests);
-
-  const socket = io(process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:8000/');
-
-  useEffect(() => {
-    socket.on('seatsUpdated', (seats) => {
-      dispatch(loadSeats(seats));
-  });
-  }, [dispatch, socket]);
+  console.log(requests);
 
   const [order, setOrder] = useState({
-    client: "",
-    email: "",
+    client: '',
+    email: '',
     day: 1,
-    seat: "",
+    seat: '',
   });
   const [isError, setIsError] = useState(false);
 
   const updateSeat = (e, seatId) => {
     e.preventDefault();
     setOrder({ ...order, seat: seatId });
-    // if other fields are filled it will also check if seat is available
-    if (order.client && order.email && order.day) {
-      dispatch(loadSeatsRequest());
-    }
   };
 
   const updateTextField = ({ target }) => {
@@ -52,10 +41,10 @@ const OrderTicketForm = () => {
       await dispatch(addSeatRequest(order));
       dispatch(loadSeatsRequest());
       setOrder({
-        client: "",
-        email: "",
+        client: '',
+        email: '',
         day: 1,
-        seat: "",
+        seat: '',
       });
       setIsError(false);
     } else {
@@ -64,81 +53,81 @@ const OrderTicketForm = () => {
   };
 
   return (
-    <Form className="order-ticket-form" onSubmit={submitForm}>
+    <Form className='order-ticket-form' onSubmit={submitForm}>
       <Row>
-        <Col xs="12" md="6">
+        <Col xs='12' md='6'>
           {isError && (
-            <Alert color="warning">
+            <Alert color='warning'>
               There are some errors in you form. Have you fill all the fields?
               Maybe you forgot to choose your seat?
             </Alert>
           )}
-          {requests["ADD_SEAT"] && requests["ADD_SEAT"].error && !isError && (
-            <Alert color="danger">{requests["ADD_SEAT"].error}</Alert>
+          {requests['ADD_SEAT'] && requests['ADD_SEAT'].error && !isError && (
+            <Alert color='danger'>{requests['ADD_SEAT'].error}</Alert>
           )}
-          {requests["ADD_SEAT"] && requests["ADD_SEAT"].success && !isError && (
-            <Alert color="success">
+          {requests['ADD_SEAT'] && requests['ADD_SEAT'].success && !isError && (
+            <Alert color='success'>
               You've booked your ticket! Check you email in order to make a
               payment.
             </Alert>
           )}
-          {requests["ADD_SEAT"] && requests["ADD_SEAT"].pending && (
-            <Progress animated className="mb-5" color="primary" value={75} />
+          {requests['ADD_SEAT'] && requests['ADD_SEAT'].pending && (
+            <Progress animated className='mb-5' color='primary' value={75} />
           )}
           <FormGroup>
-            <Label for="clientEmail">Name</Label>
+            <Label for='clientEmail'>Name</Label>
             <Input
-              type="text"
+              type='text'
               value={order.client}
-              name="client"
+              name='client'
               onChange={updateTextField}
-              id="clientName"
-              placeholder="John Doe"
+              id='clientName'
+              placeholder='John Doe'
             />
           </FormGroup>
           <FormGroup>
-            <Label for="clientEmail">Email</Label>
+            <Label for='clientEmail'>Email</Label>
             <Input
-              type="email"
+              type='email'
               value={order.email}
-              name="email"
+              name='email'
               onChange={updateTextField}
-              id="clientEmail"
-              placeholder="johndoe@example.com"
+              id='clientEmail'
+              placeholder='johndoe@example.com'
             />
           </FormGroup>
           <FormGroup>
-            <Label for="clientDay">
+            <Label for='clientDay'>
               Select which day of festivals are you interested in:
             </Label>
             <Input
-              type="select"
+              type='select'
               value={order.day}
-              name="day"
+              name='day'
               onChange={updateNumberField}
-              id="exampleSelect"
+              id='exampleSelect'
             >
               <option>1</option>
               <option>2</option>
               <option>3</option>
             </Input>
-            <small id="dayHelp" className="form-text text-muted">
+            <small id='dayHelp' className='form-text text-muted'>
               Every day of the festival uses individual ticket. You can book
               only one ticket at the time.
             </small>
           </FormGroup>
           <FormGroup check>
             <Label check>
-              <Input required type="checkbox" /> I agree with{" "}
-              <a href="#">Terms and conditions</a> and{" "}
-              <a href="#">Privacy Policy</a>.
+              <Input required type='checkbox' /> I agree with{' '}
+              <a href='/terms-and-conditions'>Terms and conditions</a> and{' '}
+              <a href='/privacy-policy'>Privacy Policy</a>.
             </Label>
           </FormGroup>
-          <Button color="primary" className="mt-3">
+          <Button color='primary' className='mt-3'>
             Submit
           </Button>
         </Col>
-        <Col xs="12" md="6">
+        <Col xs='12' md='6'>
           <SeatChooser
             chosenDay={order.day}
             chosenSeat={order.seat}
