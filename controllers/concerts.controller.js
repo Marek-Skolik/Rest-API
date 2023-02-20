@@ -1,4 +1,5 @@
 const Concert = require('../models/concerts.models');
+var sanitize = require('mongo-sanitize');
 
 exports.getRandom = async (req, res) => {
   try {
@@ -80,11 +81,10 @@ exports.getByDay = async (req, res) => {
 
 exports.add = async (req, res) => {
   try {
-    const newConcert = new Concert({
-      ...req.body,
-    });
-    await newConcert.save();
-    res.json({ message: 'OK', newConcert });
+    const { performer, genre, price, day, image } = sanitize(req.body);
+    const newConcert = { performer, genre, price, day, image };
+    const concert = await Concert.create(newConcert);
+    res.json(concert);
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -92,7 +92,7 @@ exports.add = async (req, res) => {
 
 exports.edit = async (req, res) => {
   try {
-    const { performer, genre, price, day, image } = req.body;
+    const { performer, genre, price, day, image } = sanitize(req.body);
     const concert = await Concert.findById(req.params.id);
     if (concert) {
       concert.performer = performer;

@@ -7,10 +7,12 @@ const concertsRoutes = require('./routes/concerts.routes');
 const seatsRoutes = require('./routes/seats.routes');
 const socket = require('socket.io');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '/client/build')));
 
+app.use(helmet());
 app.use(cors());
 app.use(express.urlencoded({ extends: false }));
 app.use(express.json());
