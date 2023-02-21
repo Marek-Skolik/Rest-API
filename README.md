@@ -1,1 +1,1 @@
-https://rest-api.marek26.repl.co/
+https://Rest-API.marek26.repl.co
